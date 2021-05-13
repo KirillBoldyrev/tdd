@@ -7,13 +7,15 @@ namespace BowlingGame
 {
     public class Game
     {
+        private int TotalScore { get; set; } = 0;
+        
         public void Roll(int pins)
         {
         }
 
         public int GetScore()
         {
-            throw new NotImplementedException();
+            return TotalScore;
         }
     }
 
