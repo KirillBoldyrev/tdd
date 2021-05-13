@@ -92,5 +92,22 @@ namespace BowlingGame
                 .GetScore()
                 .Should().Be((2+8)+3+(3+2));
         }
+
+        [Test]
+        public void CalculateScore_SimpleRollsAndStrikes()
+        {
+            var game = new Game();
+
+            // #1 frame - strike 
+            game.Roll(10);
+
+            // #2 frame - simple roll
+            game.Roll(1);
+            game.Roll(0);
+
+            game
+                .GetScore()
+                .Should().Be(10 + (1 + 0) + (1 + 0));
+        }
     }
 }
