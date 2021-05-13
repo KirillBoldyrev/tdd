@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using BowlingGame.Infrastructure;
 using FluentAssertions;
 using NUnit.Framework;
@@ -8,10 +10,28 @@ namespace BowlingGame
     public class Game
     {
         private int TotalScore { get; set; } = 0;
-        
+        private int CurrentThrowBallIndex { get; set; } = 0;
+        private Dictionary<int, int> ThrowBallResults { get; set; } = new Dictionary<int, int>();
+
         public void Roll(int pins)
         {
+            CurrentThrowBallIndex++;
+            ThrowBallResults.Add(CurrentThrowBallIndex, pins);
             TotalScore = TotalScore + pins;
+
+            // check for spare bonus
+            if (CurrentThrowBallIndex >= 3 && CurrentThrowBallIndex % 2 == 1)
+            {
+                var previousFrameResult = ThrowBallResults
+                    .Where(kv => kv.Key < CurrentThrowBallIndex)
+                    .OrderByDescending(kv => kv.Key)
+                    .Take(2)
+                    .Select(kv => kv.Value)
+                    .Sum();
+
+                if (previousFrameResult == 10)
+                    TotalScore = TotalScore + pins;
+            }
         }
 
         public int GetScore()
