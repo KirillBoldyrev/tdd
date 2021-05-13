@@ -11,6 +11,7 @@ namespace BowlingGame
         
         public void Roll(int pins)
         {
+            TotalScore = TotalScore + pins;
         }
 
         public int GetScore()
