@@ -29,5 +29,18 @@ namespace BowlingGame
                 .GetScore()
                 .Should().Be(0);
         }
+
+        [Test]
+        public void CalculateScore_OnlySimpleRolls()
+        {
+            var game = new Game();
+        
+            game.Roll(4);
+            game.Roll(4);
+        
+            game
+                .GetScore()
+                .Should().Be(8);
+        }
     }
 }
