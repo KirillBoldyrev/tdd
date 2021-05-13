@@ -15,11 +15,7 @@ namespace BowlingGame
 
         public void Roll(int pins)
         {
-            if (ThrowBallResults.ContainsKey(CurrentFrameIndex) && 
-                (ThrowBallResults[CurrentFrameIndex].Count == 2 || 
-                 ThrowBallResults[CurrentFrameIndex].FirstOrDefault() == 10
-                )
-               )
+            if (IsNewFrameStarted())
             {
                 CurrentFrameIndex++; // current frame ended, go to next one
             }
@@ -33,9 +29,7 @@ namespace BowlingGame
             TotalScore = TotalScore + pins;
 
             // check for spare bonus
-            if (CurrentFrameIndex > 1 && 
-                ThrowBallResults[CurrentFrameIndex].Count == 1 /* first throw in current frame */  && 
-                ThrowBallResults[CurrentFrameIndex - 1].Count == 2 /* previous frame wasn't striked */ )
+            if (IsSpare())
             {
                 var previousFrameResult = ThrowBallResults[CurrentFrameIndex - 1]
                     .Sum();
@@ -45,19 +39,44 @@ namespace BowlingGame
             }
 
             // check for strike bonus
-            if (CurrentFrameIndex > 1 &&
-                ThrowBallResults[CurrentFrameIndex - 1].Count == 1 /* previous frame was striked */)
+            if (IsSingleStrike())
             {
                 TotalScore = TotalScore + pins;
 
                 // check for multiple-strike-sequence bonus
-                if (CurrentFrameIndex > 2 &&
-                    ThrowBallResults[CurrentFrameIndex - 2].Count == 1 /* prev-previous frame was striked */ &&
-                    ThrowBallResults[CurrentFrameIndex].Count == 1 /* take only first throw in current frame */)
+                if (IsMultipleStrike())
                 {
                     TotalScore = TotalScore + pins;
                 }
             }
+        }
+
+        private bool IsNewFrameStarted()
+        {
+            return ThrowBallResults.ContainsKey(CurrentFrameIndex) &&
+                            (ThrowBallResults[CurrentFrameIndex].Count == 2 ||
+                             ThrowBallResults[CurrentFrameIndex].FirstOrDefault() == 10
+                            );
+        }
+
+        private bool IsMultipleStrike()
+        {
+            return CurrentFrameIndex > 2 &&
+                                ThrowBallResults[CurrentFrameIndex - 2].Count == 1 /* prev-previous frame was striked */ &&
+                                ThrowBallResults[CurrentFrameIndex].Count == 1 /* take only first throw in current frame */;
+        }
+
+        private bool IsSingleStrike()
+        {
+            return CurrentFrameIndex > 1 &&
+                            ThrowBallResults[CurrentFrameIndex - 1].Count == 1 /* previous frame was striked */;
+        }
+
+        private bool IsSpare()
+        {
+            return CurrentFrameIndex > 1 &&
+                            ThrowBallResults[CurrentFrameIndex].Count == 1 /* first throw in current frame */  &&
+                            ThrowBallResults[CurrentFrameIndex - 1].Count == 2 /* previous frame wasn't striked */;
         }
 
         public int GetScore()
