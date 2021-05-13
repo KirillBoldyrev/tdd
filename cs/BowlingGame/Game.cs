@@ -43,6 +43,13 @@ namespace BowlingGame
                 if (previousFrameResult == 10)
                     TotalScore = TotalScore + pins;
             }
+
+            // check for strike bonus
+            if (CurrentFrameIndex > 1 &&
+                ThrowBallResults[CurrentFrameIndex - 1].Count == 1 /* previous frame was striked */)
+            {
+                TotalScore = TotalScore + pins;
+            }
         }
 
         public int GetScore()
