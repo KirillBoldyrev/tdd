@@ -116,5 +116,25 @@ namespace BowlingGame
                 .GetScore()
                 .Should().Be(10 + (1 + 0) + (1 + 0));
         }
+
+        [Test]
+        public void CalculateScore_SimpleRollsAndDoubleStrike()
+        {
+            var game = new Game();
+
+            // #1 frame - strike 
+            game.Roll(10);
+
+            // #2 frame - strike 
+            game.Roll(10);
+
+            // #3 frame - simple roll
+            game.Roll(1);
+            game.Roll(5);
+
+            game
+                .GetScore()
+                .Should().Be(10 + (10 + 1) + 10 + (1 + 5) + (1 + 5));
+        }
     }
 }
