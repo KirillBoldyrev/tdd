@@ -49,6 +49,14 @@ namespace BowlingGame
                 ThrowBallResults[CurrentFrameIndex - 1].Count == 1 /* previous frame was striked */)
             {
                 TotalScore = TotalScore + pins;
+
+                // check for multiple-strike-sequence bonus
+                if (CurrentFrameIndex > 2 &&
+                    ThrowBallResults[CurrentFrameIndex - 2].Count == 1 /* prev-previous frame was striked */ &&
+                    ThrowBallResults[CurrentFrameIndex].Count == 1 /* take only first throw in current frame */)
+                {
+                    TotalScore = TotalScore + pins;
+                }
             }
         }
 
