@@ -10,23 +10,34 @@ namespace BowlingGame
     public class Game
     {
         private int TotalScore { get; set; } = 0;
-        private int CurrentThrowBallIndex { get; set; } = 0;
-        private Dictionary<int, int> ThrowBallResults { get; set; } = new Dictionary<int, int>();
+        private int CurrentFrameIndex { get; set; } = 1;
+        private Dictionary<int, List<int>> ThrowBallResults { get; set; } = new Dictionary<int, List<int>>();
 
         public void Roll(int pins)
         {
-            CurrentThrowBallIndex++;
-            ThrowBallResults.Add(CurrentThrowBallIndex, pins);
+            if (ThrowBallResults.ContainsKey(CurrentFrameIndex) && 
+                (ThrowBallResults[CurrentFrameIndex].Count == 2 || 
+                 ThrowBallResults[CurrentFrameIndex].FirstOrDefault() == 10
+                )
+               )
+            {
+                CurrentFrameIndex++; // current frame ended, go to next one
+            }
+
+            if (!ThrowBallResults.ContainsKey(CurrentFrameIndex))
+            {
+                ThrowBallResults.Add(CurrentFrameIndex, new List<int>());
+            }
+
+            ThrowBallResults[CurrentFrameIndex].Add(pins);
             TotalScore = TotalScore + pins;
 
             // check for spare bonus
-            if (CurrentThrowBallIndex >= 3 && CurrentThrowBallIndex % 2 == 1)
+            if (CurrentFrameIndex > 1 && 
+                ThrowBallResults[CurrentFrameIndex].Count == 1 /* first throw in current frame */  && 
+                ThrowBallResults[CurrentFrameIndex - 1].Count == 2 /* previous frame wasn't striked */ )
             {
-                var previousFrameResult = ThrowBallResults
-                    .Where(kv => kv.Key < CurrentThrowBallIndex)
-                    .OrderByDescending(kv => kv.Key)
-                    .Take(2)
-                    .Select(kv => kv.Value)
+                var previousFrameResult = ThrowBallResults[CurrentFrameIndex - 1]
                     .Sum();
 
                 if (previousFrameResult == 10)
